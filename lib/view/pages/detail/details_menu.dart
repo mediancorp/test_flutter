@@ -115,6 +115,14 @@ class _DetailSPageState extends State<DetailSPage> {
              SizedBox(
                height: 5,
              ),
+             _textDetail("films", details?.people?[0]??""),
+             SizedBox(
+               height: 5,
+             ),
+             _textDetail("films", details?.films?[0]??""),
+             SizedBox(
+               height: 5,
+             ),
            ],
          ),
         );}
