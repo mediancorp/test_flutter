@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,7 +13,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ScrollController _scrollController = new ScrollController();
   bool isLoading = false;
   List names = new List<String>.empty();
-  int _page=0;
+  int _page = 0;
   String apiUrl = "https://swapi.dev/api/species/";
   Future<List<dynamic>> _fecthDataUsers() async {
     var result = await http.get(Uri.parse(apiUrl));
@@ -29,8 +28,8 @@ class _MyHomePageState extends State<MyHomePage> {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         _getMoreData();
-      }else if(_scrollController.position.pixels ==
-          _scrollController.position.minScrollExtent){
+      } else if (_scrollController.position.pixels ==
+          _scrollController.position.minScrollExtent) {
         _getLessData();
       }
     });
@@ -41,53 +40,38 @@ class _MyHomePageState extends State<MyHomePage> {
     _scrollController.dispose();
     super.dispose();
   }
-
-  Widget _buildProgressIndicator() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Center(
-        child: Opacity(
-          opacity: isLoading ? 1.0 : 00,
-          child: const CircularProgressIndicator(),
-        ),
-      ),
-    );
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),automaticallyImplyLeading: false
-      ),
+      appBar:
+          AppBar(title: const Text('Home'), automaticallyImplyLeading: false),
       resizeToAvoidBottomInset: false,
-
       body: FutureBuilder<List<dynamic>>(
         future: _fecthDataUsers(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.all(10),
-                itemCount: snapshot.data.length,
-                itemBuilder: (BuildContext context, int index) {
-                  var url = snapshot.data[index]['url'];
-                  return GestureDetector(
-                      onTap: () {
-                        Navigate.pushPage(context, DetailSPage(url: url));
-                      },
-                  child: ListTile(
-                    leading: const CircleAvatar(
-                      radius: 30,
-                    ),
-                    title: Text(snapshot.data[index]['name']),
-                    subtitle: Text(snapshot.data[index]['classification']),
-                  )
-                  );
-                },
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.all(10),
+              itemCount: snapshot.data.length,
+              itemBuilder: (BuildContext context, int index) {
+                var url = snapshot.data[index]['url'];
+                return GestureDetector(
+                    onTap: () {
+                      Navigate.pushPage(context, DetailSPage(url: url));
+                    },
+                    child: ListTile(
+                      leading: const CircleAvatar(
+                        radius: 30,
+                      ),
+                      title: Text(snapshot.data[index]['name']),
+                      subtitle: Text(snapshot.data[index]['classification']),
+                    ));
+              },
               controller: _scrollController,
             );
           } else {
-            return Center(child: _buildProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -95,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _getMoreData() async {
-  if (!isLoading) {
+    if (!isLoading) {
       setState(() {
         isLoading = true;
       });
@@ -106,19 +90,19 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
+
   void _getLessData() async {
-  if (!isLoading) {
+    if (!isLoading) {
       setState(() {
         isLoading = true;
       });
       setState(() {
         isLoading = false;
         _page--;
-        if(_page>0) {
+        if (_page > 0) {
           apiUrl = "https://swapi.dev/api/species/?page=$_page";
         }
       });
     }
   }
-
 }

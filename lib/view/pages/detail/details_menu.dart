@@ -1,9 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:project_test/model/detail.dart';
+import 'package:project_test/util/colors.dart';
+import 'package:project_test/view/widgets/section_header.dart';
+import 'package:project_test/view/widgets/species.dart';
 
 class DetailSPage extends StatefulWidget {
   const DetailSPage({Key? key, required this.url}) : super(key: key);
@@ -29,11 +31,13 @@ class _DetailSPageState extends State<DetailSPage> {
       throw Exception('Failed');
     }
   }
+
   @override
   void initState() {
     super.initState();
     getAsync();
   }
+
   DetailsModel? details;
   getAsync() async {
     try {
@@ -44,113 +48,57 @@ class _DetailSPageState extends State<DetailSPage> {
 
     if (mounted) setState(() {});
   }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-        appBar: AppBar(
-        title: Text('Detail'),automaticallyImplyLeading: false
-    ),
-    body: Container(
-      margin: const EdgeInsets.only(left: 20.0, right: 20.0),
-      color: Colors.white,
-    child: FutureBuilder<DetailsModel>(
-    future: getUser(),
-    builder: (context, snapshot) {
-    if (snapshot.hasData) {
-      return Center(
-         child: Column(
-           crossAxisAlignment: CrossAxisAlignment.start,
-           children: [
-             SizedBox(height: 10),
-             _textDetail("nama", details?.name??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("classification", details?.classification??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("designation", details?.designation??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("average_height", details?.average_height??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("skin colors", details?.skin_colors??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("hair colors", details?.hair_colors??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("eye colors", details?.eye_colors??""),
-             SizedBox(
-               height: 7,
-             ),
-             _textDetail("average_lifespan", details?.average_lifespan??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("homeworld", details?.homeworld??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("language", details?.language??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("created", details?.created??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("edited", details?.edited??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("url", details?.url??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("films", details?.people?[0]??""),
-             SizedBox(
-               height: 5,
-             ),
-             _textDetail("films", details?.films?[0]??""),
-             SizedBox(
-               height: 5,
-             ),
-           ],
-         ),
-        );}
-           else {
-      return Center(child: CircularProgressIndicator());
-    }
-    },
-    ),
+      appBar: AppBar(title: Text('Detail'), automaticallyImplyLeading: false),
+      body: Container(
+        margin: const EdgeInsets.only(left: 20.0, right: 20.0),
+        color: Colors.white,
+        child: FutureBuilder<DetailsModel>(
+          future: getUser(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Center(
+                child: ListView(
+                  children: [_textDetail()],
+                ),
+              );
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
         ),
-      );
+      ),
+    );
   }
-_textDetail(String title, String text){
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.start,
-    children: <Widget>[
-      Expanded(flex: 1, child: Text(title,
-        style: TextStyle(fontSize: 13, color: Colors.black),
-      )),
-      Expanded(flex: 1, child: Text(" :",
-        style: TextStyle(fontSize: 13, color: Colors.black),
-      )),
-      Expanded(
-          flex:2,
-          child: Text(
-            text,
-            style: TextStyle(fontSize: 13, color: Colors.black),
-          )),
-    ],
-  );
-}
+
+  _textDetail() {
+    return Card(
+      child: Container(
+        width: double.infinity,
+        color: AppColors.orange[50],
+        child: Column(
+          children: [
+            SectionHeader(text: 'Species Information'),
+            InfoSpecies(category: 'Name', value: details?.name ?? ""),
+            InfoSpecies(
+                category: 'Class', value: details?.classification ?? ""),
+            InfoSpecies(
+                category: 'Designation', value: details?.designation ?? ""),
+            InfoSpecies(
+                category: 'Height', value: details?.average_height ?? ""),
+            InfoSpecies(
+                category: 'Skin Color', value: details?.skin_colors ?? ""),
+            InfoSpecies(
+                category: 'Eye Color', value: details?.eye_colors ?? ""),
+            InfoSpecies(
+                category: 'Life Span', value: details?.average_lifespan ?? ""),
+            InfoSpecies(category: 'Language', value: details?.language ?? ""),
+          ],
+        ),
+      ),
+    );
+  }
 }
