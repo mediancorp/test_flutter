@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:project_test/model/detail.dart';
+import 'package:project_test/model/home.dart';
 import 'package:project_test/util/colors.dart';
 import 'package:project_test/view/widgets/section_header.dart';
 import 'package:project_test/view/widgets/species.dart';
@@ -21,11 +22,24 @@ class _DetailSPageState extends State<DetailSPage> {
     var response = await http.get(
       Uri.parse(apiUrl),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       DetailsModel user = DetailsModel.fromJson(data);
       return user;
+    } else {
+      throw Exception('Failed');
+    }
+  }
+  late String homeUrl = details?.homeworld??"";
+  Future<HomeModel> getHome() async {
+    var response = await http.get(
+      Uri.parse(homeUrl),
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      HomeModel home = HomeModel.fromJson(data);
+      return home;
     } else {
       print(response.body);
       throw Exception('Failed');
@@ -42,10 +56,20 @@ class _DetailSPageState extends State<DetailSPage> {
   getAsync() async {
     try {
       details = await getUser();
+      homeSync();
     } catch (e) {
       print(e);
     }
+    if (mounted) setState(() {});
+  }
 
+  HomeModel? homeName;
+  homeSync() async {
+    try {
+      homeName = await getHome();
+    } catch (e) {
+      print(e);
+    }
     if (mounted) setState(() {});
   }
 
@@ -96,6 +120,7 @@ class _DetailSPageState extends State<DetailSPage> {
             InfoSpecies(
                 category: 'Life Span', value: details?.average_lifespan ?? ""),
             InfoSpecies(category: 'Language', value: details?.language ?? ""),
+            InfoSpecies(category: 'Home World', value: homeName?.name ?? ""),
           ],
         ),
       ),
